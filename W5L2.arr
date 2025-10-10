@@ -2,7 +2,7 @@ use context dcic2024
 import math as M
 import statistics as S
 
-
+#CLASS NOTE: A table is a compound data structure
 cafe-data =
   table: day, drinks-sold
     row: "Mon", 45
@@ -11,12 +11,13 @@ cafe-data =
     row: "Thu", 40
     row: "Fri", 60
   end
-
+cafe-data
 cafe-data.get-column("drinks-sold")
 
 
 
 sales = cafe-data.get-column("drinks-sold")
+#the functions below only accept lists
 M.max(sales)      # maximum sales
 S.mean(sales)     # average sales
 M.sum(sales)      # total sold
@@ -33,6 +34,12 @@ fun is-real-code(code :: String) -> Boolean:
 end
 
 real-codes = filter(is-real-code, unique-codes)
+
+#CLASS NOTE: We use .get instead of n
+real-codes.get(2)
+
+#CLASS NOTE: using lam
+map(lam(i):
 
 
 #Like how tables have row-n(), lists have a way of getting an element by position:
@@ -67,6 +74,9 @@ lower-codes = map(string-to-lower, real-codes)
 #  result
 #end
 
+    
+    #CLASS NOTE: We use append when we want to modify a list to a NEW list   
+    
 
 
 
@@ -105,6 +115,7 @@ real-answers
 
 #LOOPS
 #Define your own product function that takes a list of numbers and returns their product (multiply all of them together).
+    #The angular brackets show the type inside the list
 fun product(listt :: List<Number>) -> Number block:
   var result = 1
   for each(n from listt):
@@ -274,4 +285,5 @@ my-alternating(list6)
 
 
 
-
+    #Array, recurssion, data definitions
+    #In array we use striding
