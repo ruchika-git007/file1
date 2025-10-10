@@ -155,7 +155,12 @@ ordered_ons
 
 
 
+#If you just do order-by(with-distance, "distance", true) then we'll get ab error that means you can't compare 2 rough numbers.
 
+
+
+#VAT QUESTION IS VERY SIMILAR TO EXAM QUESTION !!!!!!!!!!!!!!
+#THIS IS A DESIGN CLASS SO WE WON'T LOOSE MARKS IF WE LIKE MISS A SEMICOLON, WE NEED TO BE ABLE TO "EXPLAIN" WHAT WE ARE DOING.
 
 
 
