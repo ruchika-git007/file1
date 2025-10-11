@@ -1,6 +1,7 @@
 use context dcic2024
 include csv
 include data-source
+include tables
 
 orders = table: time, amount
   row: "08:00", 10.50
