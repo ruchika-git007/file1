@@ -1,21 +1,4 @@
 use context dcic2024
-#W6R1
-
-#CLASS NOTES
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -29,6 +12,7 @@ data Priority:
   | high
 end
 
+#designing a structured data type for status data type
 # Then define Status
 data Status:
   | todo
