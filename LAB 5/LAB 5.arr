@@ -3,8 +3,44 @@ include csv
 include tables
 include data-source
 
+
+
 #TASK 1
-flights_samples = load-table:
+#STEP 1
+
+#Problem: The carrier column has inconsistent formatting (extra spaces, lowercase letters).
+#Planned Step: "Clean the carrier column by trimming spaces and converting text to uppercase."
+
+#Implementation: Use transform-column with a lambda that applies trim and string-to-upper to each value.
+
+# Inputs: flight, carrier, dep_time, tailnum, dep_delay, arr_delay, distance, air_time
+# Outputs: cleaned table, dedup_key column, visualisations
+# Steps:
+# 1. Replace missing tailnum values with "UNKNOWN"
+# 2. Clean dep_delay and arr_delay: replace negative values with 0
+# 3. Normalize carrier: trim spaces and convert to uppercase
+# 4. Normalize dep_time to "HH:MM" format
+# 5. Create dedup_key column: flight + carrier + dep_time
+# 6. Remove duplicates using dedup_key
+# 7. Map carrier codes to airline names
+# 8. Filter outliers: distance > 5000 or air_time < 500
+# 9. Visualize: bar chart (airline), histogram (distance), scatter plot (air_time vs distance)
+# 10. Use for-each loop to compute total, average, and max distance
+
+
+#STEP 2
+#Problem: The tailnum column has blank cells with missing values.
+#Planned Step: "Fill the tailnum column by filling the blank cells."
+
+#Implementation: 
+ 
+
+
+
+
+#TASK 2
+# Load and sanitize
+flights_sample53 = load-table:
   rownames :: Number,
   dep_time :: Number,
   sched_dep_time :: Number,
@@ -37,86 +73,35 @@ flights_samples = load-table:
   sanitize minute using num-sanitizer
 end
 
-flights_samples
 
-
-
-
-
-#TASK 1
-#STEP 1
-
-#Problem: The carrier column has inconsistent formatting (extra spaces, lowercase letters).
-#Planned Step: "Clean the carrier column by trimming spaces and converting text to uppercase."
-
-#Implementation: Use transform-column with a lambda that applies trim and string-to-upper to each value.
-
-
-
-#STEP 2
-#Problem: The tailnum column has blank cells with missing values.
-#Planned Step: "Fill the tailnum column by filling the blank cells."
-
-#Implementation: 
- 
-
-
-
-
-#TASK 2
-#2.1
-# bonus-scores = transform-column(students,  "score", add-bonus)
-#fun replace-space(a :: string):
-#  if a = "" :
-#   a = "UNKNOWN"
-#  else:
-#    a = a
-#  end
-#end
-#replaced = transform-column(flights_samples, "tailnum", replace-space)
-  
-
-
-
-#2.2
-fun clean-delays(a :: Number) -> Number:
-  if a < 0:
-    0
+# Replacing missing tailnum
+fun fix-tail(t :: String) -> String:
+  doc: "Replace empty tailnum with UNKNOWN"
+  if t == "":
+    "UNKNOWN"
   else:
-    a
+    t
   end
 end
 
-flights-cleaned = transform-column(
-  transform-column(flights_samples, "dep_delay", clean-delays),
-  "arr_delay", clean-delays
-)
-
-flights-cleaned
+flightssample = transform-column(flights_sample53, "tailnum", fix-tail)
 
 
+# Clean delay columns
+fun clean-delay(d :: Number) -> Number:
+  doc: "Replace negative delay with 0"
+  if d < 0:
+    0
+  else:
+    d
+  end
+end
 
+flights_53 = transform-column(transform-column(flights_sample53, "dep_delay", clean-delay), "arr_delay", clean-delay)
 
-#2.3
-#dedup_key = "flight" + "carrier" + "dep_time"
-#fun concatinator(a :: Number, b :: String):
-# a = r["flight"]
-# b = r["carrier"]
-#  string-append(a, b)
-#end
-
-
-#joined1 = build-column(flights_samples, "dedup_key", concatinator ) 
-
-
-
-#2.4
-#3.1
-converted = string-to-number("flight")
-
-
-#3.2
-# Trim spaces at both ends
+#TASK 2.3 — dedup_key column
+# Helper functions
+# Helper: Trim spaces from string
 fun trim(s :: String) -> String:
   doc: "Remove spaces from the given string."
   n = string-length(s)
@@ -127,73 +112,111 @@ fun trim(s :: String) -> String:
   end
 end
 
-trim("carrier")
+# Helper: Format dep_time like 517 → "05:17"
+fun format-time(t :: Number) -> String:
+  doc: "Convert dep_time to HH:MM format"
+  h = num-floor(t / 100)
+  m = num-modulo(t, 100)
+  h-str = if h < 10: string-append("0", num-to-string(h)) else: num-to-string(h) end
+  m-str = if m < 10: string-append("0", num-to-string(m)) else: num-to-string(m) end
+  string-append(string-append(h-str, ":"), m-str)
 
-
-
-
-#3.3
-#517 = dep_time
-#hour = num-flour(517/100) gives 5
-#min = num-modulo(517,100) gives 17
-
-hour = num-floor(517 / 100)
-min = num-modulo(517, 100)
-
-fun final1(a :: Number):
-  if a < 10:
-    0 + a
-  else:
-    a
-  end
 end
 
-final1(hour)
+# Build dedup_key column
+flights_5 = build-column(flights_53, "dedup_key",
+  lam(r):
+string-append(
+  string-append(
+    string-append(num-to-string(r["flight"]), "-"),
+    string-append(string-to-upper(trim(r["carrier"])), "-")
+  ),
+  format-time(r["dep_time"])
+)
 
 
-#grouping and counting duplicate entries
-grouped = group(flights_samples, "dedup_key")
-counted = count(flights_samples, "dedup_key")
-grouped
-counted
+  end
+)
 
 
+
+
+# Counting duplicates
+grouped = group(flights_53, "dedup_key")
+counted = count(flights_53, "dedup_key")
 
 
 
 #TASK 3
-fun added-airlines(carrier :: String):
-  if carrier = "UA":
-    "United Airlines"
-  else if carrier = "AA":
-    "American Airlines"
-  else if carrier = "B6"
-    "Jet Blue"
-    else if carrier = "DL":
-    "Delta Airlines"
-    else if carrier = "EV":
-    "Express Jet"
-  else if carrier = "WN":
-    "Southwest Airlines"
-  else if carrier = "OO":
-    "Southwest Airlines"
-  else:
-    "Other"
+#Airline Mapping and Outlier Filtering
+fun map-airline(c :: String) -> String:
+  doc: "Map carrier codes to airline names"
+  if c == "UA": "United Airlines"
+  else if c == "AA": "American Airlines"
+  else if c == "B6": "JetBlue"
+  else if c == "DL": "Delta Air Lines"
+  else if c == "EV": "ExpressJet"
+  else if c == "WN": "Southwest Airlines"
+  else if c == "OO": "SkyWest Airlines"
+  else: "Other"
   end
 end
 
+flightssample1 = build-column(flights_53, "airline",
+  lam(r): map-airline(string-to-upper(trim(r["carrier"]))) end
+)
 
-build-column(flights_samples, "airlines", added-airlines)
-
-
-
-
-#3.2
-filtered-outliers = filter-with(filter-with(flights_samples, lam(r): r["distance"] > 5000 end), lam(r): r["air_time"] < 500))
-
+flightssample2 = filter-with(flights_53,
+  lam(r): (r["distance"] <= 5000) and (r["air_time"] >= 500) end
+)
 
 
 
-
-#TASK 4
+# TASK 4 
 #4.1
+# Bar chart: number of flights by airline
+bar-chart(flightssample2, "airline")
+
+# Histogram: distribution of flight distances
+histogram(flightssample2, "distance")
+
+# Scatter plot: air_time vs. distance
+scatter-plot(flightssample2, "air_time", "distance")
+
+
+
+
+#4.2
+#I need more feedback on this task
+distances = get-column(flightssample2, "distance")
+
+# Initialize variables
+var total = 0
+var max = 0
+
+# Loop through distances
+for each d from distances:
+  total := total + d
+  if d > max:
+    max := d
+  end
+end
+
+# Computing average
+avg = total / length(distances)
+
+# Display results
+total
+avg
+max
+
+
+
+
+
+
+
+
+
+ 
+
