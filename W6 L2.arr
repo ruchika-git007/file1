@@ -1,5 +1,5 @@
 use context dcic2024
-include data-source
+
 #W6 L2
 
 #CLASS EXERCISES
@@ -21,8 +21,9 @@ fun string-concat(l :: List<String>) -> String:
   end
 where:
   string-concat([list: "a", "b", "c"]) is "abc"
-  string-concat([list: "hello", " ", "world"]) is "hello world"
-  string-concat([list: ]) is ""
+  string-concat([list: "b", "c"]) is "bc"
+  string-concat([list: "c" ]) is "c"
+  string-concat([list: "" ]) is ""
 end
 
 
@@ -45,8 +46,9 @@ fun strings-upper(l :: List<String>) -> List<String>:
   end
 where:
   strings-upper([list: "a", "b", "c"]) is [list: "A", "B", "C"]
-strings-upper([list: "hello", "world"]) is [list: "HELLO", "WORLD"]
-strings-upper([list: ]) is [list: ]
+  strings-upper([list: "a", "b"]) is [list: "A", "B"]
+  strings-upper([list: "a" ]) is [list: "A" ]
+  strings-upper([list: ]) is ([list: ])
 end
 
 
@@ -79,5 +81,7 @@ fun round-numbers(l :: List<Number>) -> List<Number>:
   end
 where:
   round-numbers([list: 1.2, 3.7, 4.5]) is [list: 1, 4, 5]
+  round-numbers([list: 3.7, 4.5]) is [list: 4, 5]
+    round-numbers([list: 4.5]) is [list: 5]
   round-numbers([list: ]) is [list: ]
 end
