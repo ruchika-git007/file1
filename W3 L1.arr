@@ -1,4 +1,49 @@
 
+#LECTURE NOTES
+#|Examples
+Written examples help us figure what a function needs to do
+Help us make sure that we understand the problem
+Provide guidance for someone else reading our code to know what to expect
+Examples are a nice intermediate point before writing code.
+You can sketch out the relevant computation on concrete values first, then worry about turning it into a function.
+If you can't write the examples, chances are you won't be able to write the function either.
+Examples break down the programming processLinks to an external site. into smaller, manageable steps.|#
+
+
+
+
+#Pyret provides us with a tool for looking at the inside of program called spy.
+#Spy allows us to see expressions as code is running.
+#The simplest form is to give it the names of identifiers, i.e.:
+   
+   
+   
+   
+#|If/Else and Ask Expressions
+When you want to have multiple branches in your conditionals, you can use else if
+if x == 0:
+  1
+else if x > 0:
+  x * 2
+else:
+  x * -1
+end
+Ask ExpressionsLinks to an external site. are a slightly different way to write else if expressions which make them easier to read
+Branches are separated by the | pipe character
+   The default condition is written as otherwise: 
+ask:
+  | x == 0 then: 1
+  | x > 0 then: x * 2
+  | otherwise: x * -1
+end            |#
+
+
+
+
+
+
+
+
 #choose-hat function
 #fun choose-hat(temp-in-C :: Number) -> String:
 #  doc: "determines appropriate head gear, with above 27C a sun hat, below nothing"
@@ -69,12 +114,31 @@ end
 
 #Let's now design a new function, choose-outfit, that takes as input the temperature in celsius, and uses the two functions you just wrote to compute a final outfit. There are at least two ways of doing this—one defines a new local name with the result of calling choose-hat, and the other directly passes the result of calling choose-hat to add-glasses.
 
+#ption 1: Using a Local Name
+fun choose-outfit(temp-in-C :: Number) -> String:
+  doc: "computes final outfit with hat and glasses based on temperature"
+  block:
+    headwear = choose-hat(temp-in-C)
+    add-glasses(headwear)
+  end
+end
+#- This version stores the result of choose-hat(temp-in-C) in a local name headwear
+#- Then passes it to add-glasses
 
-  #using Direct Function composition
+
+
+
+
+
+#Option 2: using Direct Function composition
   fun choose-outfit(temp-in-C :: Number) -> String:
   doc: "Directly passes result of choose-hat to add-glasses"
   add-glasses(choose-hat(temp-in-C))
 end
+#- This version skips the local name and directly pipes the result of choose-hat into add-glasses
+
+
+
 
   
   
@@ -95,3 +159,19 @@ where:
   choose-hat-or-visor(5, true) is "winter hat"
 end
 
+
+
+#|Wrap-up - Full Design Recipe
+There is a useful order we should carry out writing new functions, and we can make this concrete as a Design Recipe for functions:
+
+1. Type Annotation
+Once we have decided we need to write a function, the first thing we should think about, assuming we were not told it, is what type of inputs the function should take and what type of output it should produce. While we introduced type annotations as a way to get better error messages, and indeed they are, this use as part of a design process is indeed much more important: it helps us organise our thoughts!
+
+2. Doc String
+After figuring out the types of data the function operates over, it is worth writing down what the function should do! This is in English, and it doesn't need to include how the function works (and usually shouldn't)—the purpose of the explanation is so that someone can understand how to use the function, not how it works internally. While this serves as useful documentation, it is even more useful as part of a design process, since like type annotations, it helps us organize our thoughts—in particular, it makes us think a little bit more concretely about how the code should work—i.e., how is the output constructed from the input.
+
+3. Tests
+The third step is writing tests is a where block—these examples serve as the most concrete step of our design process, as its the point where we think through concrete cases of inputs, and exactly the output they should produce. It may be, as we write them, that we realise we did not think of something in the earlier steps, which is fine—we go back and fix those and then continue forward. In addition to forming a useful step in the design process, these tests will also be used to check that our function works as expected!
+
+4. Code
+The last step, which we should only do after the first three, is writing down the code. There is a strong tendency for students, especially beginners, to want to jump ahead—but the clarity that comes from doing the earlier steps will make writing the code easier, to the point that it is faster to not skip ahead.|#

@@ -1,7 +1,4 @@
-use context dcic 2024
-
-#LAB 2
-#SAMPLE SOLUTIONS
+use context dcic2024
 import file("lab2-support.arr") as support
 
 "1..."
