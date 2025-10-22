@@ -1,4 +1,8 @@
-use context starter2024
+use context dcic2024
+include csv
+include data-source
+
+
 #LAB 3
 #SAMPLE SOLUTIONS
 
@@ -85,9 +89,6 @@ mars["distance"]
 
 
 #PROBLEM 5
-use context dcic2024
-include csv
-include data-source
 
 boe-rates = load-table:
   year :: Number,
