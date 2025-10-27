@@ -61,7 +61,7 @@ end
 #Ensure that you add a parametric annotation to the function so that it can only be given lists of numbers
 
 #My examples:
-#round-numbers([list: 1.2, 3.7, 4.5]) is [list: 1, 4, 4]
+#round-numbers([list: 1.2, 3.7, 4.5]) is [list: 1, 4, 5]
 #round-numbers([list: ]) is [list: ]
 
 #My functions (I created 2 functions, A function to round and a function to round numbers in the list)
